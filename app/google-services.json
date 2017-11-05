@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "3231883969",
+    "firebase_url": "https://logical-reasoning-29496.firebaseio.com",
+    "project_id": "logical-reasoning-29496",
+    "storage_bucket": "logical-reasoning-29496.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3231883969:android:3cb95e0d5369878e",
+        "android_client_info": {
+          "package_name": "app.reasoning.logical.quiz.craftystudio.logicalreasoning"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "3231883969-qj0sdbq7i3uq677gsf0oimhdg1dlls32.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlVmYfyVPIpHR1JBfsOVCzPYlleSAtYYI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
