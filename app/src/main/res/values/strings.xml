@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">LogicalReasoning</string>
+    <string name="app_name">Logical Reasoning</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="title_activity_random_text">Random Test Activity</string>
+    <string name="title_activity_topic_questions">TopicQuestions</string>
 </resources>

@@ -18,6 +18,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".RandomTestActivity"
+            android:label="@string/title_activity_random_text"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".TopicQuestions"
+            android:label="@string/title_activity_topic_questions"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
