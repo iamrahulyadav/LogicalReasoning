@@ -22,14 +22,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import io.fabric.sdk.android.Fabric;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+import utils.AppRater;
 import utils.ClickListener;
 import utils.FireBaseHandler;
 import utils.Questions;
@@ -53,6 +60,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+/*
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
@@ -105,10 +114,18 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
 
-                // uploadTopicName();
+*/
 
             }
         });
+
+
+        FirebaseMessaging.getInstance().subscribeToTopic("subscribed");
+        try {
+            AppRater.app_launched(MainActivity.this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -225,6 +242,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void openDynamicLink() {
+
+        //dowmload topiclist
+        initializeActivity();
+
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(getIntent())
                 .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
@@ -239,21 +260,17 @@ public class MainActivity extends AppCompatActivity
                             String questionID = deepLink.getQueryParameter("questionID");
                             String questionTopicName = deepLink.getQueryParameter("questionTopic");
 
-                            //dowmload topiclist
-                            initializeActivity();
 
                             //download question
                             if (questionID != null) {
                                 openTopicQuestionActivity(questionTopicName, questionID);
                                 try {
-                                    // Answers.getInstance().logCustom(new CustomEvent("Via dyanamic link").putCustomAttribute("Story id", questionID));
+                                    Answers.getInstance().logCustom(new CustomEvent("Via dyanamic link").putCustomAttribute("question id", questionID));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
 
-
-                            // downloadNewsArticle(newsArticleID);
 
                         } else {
                             Log.d("DeepLink", "onSuccess: ");
@@ -266,19 +283,19 @@ public class MainActivity extends AppCompatActivity
                                 String questionID = intent.getStringExtra("questionID");
                                 String questionTopicName = intent.getStringExtra("questionTopic");
                                 if (questionID == null) {
-                                    initializeActivity();
+
                                 } else {
                                     //download story
                                     openTopicQuestionActivity(questionTopicName, questionID);
                                     try {
-                                        // Answers.getInstance().logCustom(new CustomEvent("Via push notification").putCustomAttribute("Story id", storyID));
+                                        Answers.getInstance().logCustom(new CustomEvent("Via push notification").putCustomAttribute("Question id", questionID));
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                     //   Toast.makeText(this, "Story id is = "+storyID, Toast.LENGTH_SHORT).show();
                                 }
                             } catch (Exception e) {
-                                initializeActivity();
+
                                 e.printStackTrace();
                             }
 
