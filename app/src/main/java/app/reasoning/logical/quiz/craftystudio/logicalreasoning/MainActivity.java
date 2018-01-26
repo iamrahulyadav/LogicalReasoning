@@ -358,7 +358,10 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             // Handle the camera action
         } else if (id == R.id.nav_rate) {
-            onRateUs();
+            Intent intent = new Intent(MainActivity.this, BookmarkActivity.class);
+            startActivity(intent);
+
+            // onRateUs();
         } else if (id == R.id.nav_share) {
             ShareApp();
         } else if (id == R.id.nav_suggestion) {

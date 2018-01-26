@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,6 +31,7 @@ import com.google.firebase.dynamiclinks.ShortDynamicLink;
 
 import java.util.ArrayList;
 
+import utils.DataBaseHandler;
 import utils.FireBaseHandler;
 import utils.Questions;
 import utils.ZoomOutPageTransformer;
@@ -298,6 +300,20 @@ public class TopicQuestions extends AppCompatActivity {
         public int getCount() {
             return mQuestionsList.size();
         }
+    }
+
+
+    public void onBookMarkQuestion(View view) {
+        //Adding Question to Bookmark
+        DataBaseHandler db = new DataBaseHandler(TopicQuestions.this);
+        /**
+         * CRUD Operations
+         * */
+        // Inserting Contacts
+        //Log.d("Insert: ", "Inserting ..");
+        db.addBookMark(mQuestionsList.get(mPager.getCurrentItem()));
+        Toast.makeText(this, "Question Bookmarked", Toast.LENGTH_SHORT).show();
+
     }
 
 

@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_topic_questions"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="app.reasoning.logical.quiz.craftystudio.logicalreasoning.TopicQuestions"
-    tools:showIn="@layout/activity_topic_questions">
+    tools:context="app.reasoning.logical.quiz.craftystudio.logicalreasoning.BookmarkActivity"
+    tools:showIn="@layout/activity_bookmark">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:orientation="vertical">
 
         <!--Topic name -->
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/colorMainBg"
             app:cardCornerRadius="0dp"
             app:cardElevation="0dp">
 
@@ -38,85 +35,60 @@
 
                 <!--Topic name textview -->
                 <TextView
-                    android:id="@+id/fragmentAptitudeQuiz_topicName_Textview"
+                    android:id="@+id/bookmark_topicName_Textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="14dp"
                     android:layout_weight="1"
                     android:text="Topic Name"
-                    android:textAlignment="center"
+                    android:textAlignment="textStart"
                     android:textColor="@color/colorWhiteBg"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <!--Bookmark question Imageview -->
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:onClick="onBookMarkQuestion"
-                    android:src="@drawable/ic_action_share"
+                    android:onClick="openDeleteBookmarkDialog"
+                    android:src="@drawable/ic_menu_gallery" />
 
-                    />
 
                 <ImageView
-                    android:id="@+id/topicQuestion_share_imageview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="4dp"
+                    android:onClick="onShareQuestion"
+
                     android:src="@drawable/ic_action_share" />
 
+
+
+
             </LinearLayout>
+
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginRight="24dp"
-            app:cardBackgroundColor="@color/colorLightWhiteBg"
-            app:cardCornerRadius="0dp"
-            app:cardElevation="0dp"></android.support.v7.widget.CardView>
-
+            android:layout_height="2dp"
+            app:cardBackgroundColor="@color/colorWhiteBg"></android.support.v7.widget.CardView>
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/mainActivity_viewpager"
+            android:id="@+id/bookmarkActivity_viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/colorMainBg"
+            android:background="@color/colorPrimary"
             android:visibility="visible">
 
         </android.support.v4.view.ViewPager>
-
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:visibility="gone"
-            app:cardBackgroundColor="@color/colorLightWhiteBg"
-            app:cardCornerRadius="0dp"
-            app:cardElevation="0dp"></android.support.v7.widget.CardView>
-
-        <!-- Bottom Bar explaination and share -->
-        <android.support.design.widget.BottomNavigationView
-            android:id="@+id/mainactivity_navigation_menu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/colorPrimary"
-            android:visibility="gone"
-            app:elevation="@dimen/cardview_default_elevation"
-            app:itemIconTint="@color/colorWhiteBg"
-            app:itemTextColor="@color/colorWhiteBg"
-            app:menu="@menu/bottombar_mainactivity_menu" />
-
-
     </LinearLayout>
 
-
-</android.support.design.widget.CoordinatorLayout>
+</android.support.constraint.ConstraintLayout>
