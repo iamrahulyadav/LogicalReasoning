@@ -15,6 +15,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+import com.crashlytics.android.answers.CustomEvent;
+
 import utils.Questions;
 
 /**
@@ -159,8 +163,8 @@ public class AptitudeFragment extends Fragment implements View.OnClickListener {
             switch (view.getId()) {
 
                 case R.id.fragmentAptitudeQuiz_optionA_Cardview:
-                    if (questions.getOptionA().equalsIgnoreCase(questions.getCorrectAnswer())) {
-                        Toast.makeText(mainActivity, "Right Answer", Toast.LENGTH_SHORT).show();
+                    if (questions.getOptionA().trim().equalsIgnoreCase(questions.getCorrectAnswer().trim())) {
+                        //Toast.makeText(mainActivity, "Right Answer", Toast.LENGTH_SHORT).show();
                         optionACardView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGreen));
 
 
@@ -173,8 +177,8 @@ public class AptitudeFragment extends Fragment implements View.OnClickListener {
                     break;
 
                 case R.id.fragmentAptitudeQuiz_optionB_Cardview:
-                    if (questions.getOptionB().equalsIgnoreCase(questions.getCorrectAnswer())) {
-                        Toast.makeText(mainActivity, "Right Answer", Toast.LENGTH_SHORT).show();
+                    if (questions.getOptionB().trim().equalsIgnoreCase(questions.getCorrectAnswer().trim())) {
+                        //Toast.makeText(mainActivity, "Right Answer", Toast.LENGTH_SHORT).show();
                         optionBCardView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGreen));
 
                     } else {
@@ -184,8 +188,8 @@ public class AptitudeFragment extends Fragment implements View.OnClickListener {
                     }
                     break;
                 case R.id.fragmentAptitudeQuiz_optionC_Cardview:
-                    if (questions.getOptionC().equalsIgnoreCase(questions.getCorrectAnswer())) {
-                        Toast.makeText(mainActivity, "Right Answer", Toast.LENGTH_SHORT).show();
+                    if (questions.getOptionC().trim().equalsIgnoreCase(questions.getCorrectAnswer().trim())) {
+                        //Toast.makeText(mainActivity, "Right Answer", Toast.LENGTH_SHORT).show();
                         optionCCardView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGreen));
 
                     } else {
@@ -195,8 +199,8 @@ public class AptitudeFragment extends Fragment implements View.OnClickListener {
                     }
                     break;
                 case R.id.fragmentAptitudeQuiz_optionD_Cardview:
-                    if (questions.getOptionD().equalsIgnoreCase(questions.getCorrectAnswer())) {
-                        Toast.makeText(mainActivity, "Right Answer", Toast.LENGTH_SHORT).show();
+                    if (questions.getOptionD().trim().equalsIgnoreCase(questions.getCorrectAnswer().trim())) {
+                        //Toast.makeText(mainActivity, "Right Answer", Toast.LENGTH_SHORT).show();
                         optionDCardView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGreen));
 
                     } else {
@@ -214,6 +218,11 @@ public class AptitudeFragment extends Fragment implements View.OnClickListener {
 
             }
             questionExplaination.setText(questions.getQuestionExplaination());
+            try {
+                Answers.getInstance().logContentView(new ContentViewEvent().putContentName("Question answered").putContentType(questions.getQuestionTopicName()).putContentId(questions.getQuestionUID()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
 
         } else {
@@ -258,6 +267,8 @@ public class AptitudeFragment extends Fragment implements View.OnClickListener {
 
 
                 questionExplaination.setText(questions.getQuestionExplaination());
+
+                formatQuestion(questions);
 
                 if (questions.getUserAnswer().equalsIgnoreCase(questions.getCorrectAnswer())) {
                     if (optionA.getText().toString().equalsIgnoreCase(questions.getUserAnswer())) {
@@ -315,6 +326,18 @@ public class AptitudeFragment extends Fragment implements View.OnClickListener {
 
             }
         }
+
+    }
+
+    private void formatQuestion(Questions questions) {
+
+        questions.setCorrectAnswer(questions.getCorrectAnswer().trim());
+        questions.setOptionA(questions.getOptionA().trim());
+        questions.setOptionB(questions.getOptionB().trim());
+        questions.setOptionC(questions.getOptionC().trim());
+        questions.setOptionD(questions.getOptionD().trim());
+        questions.setUserAnswer(questions.getUserAnswer().trim());
+
 
     }
 

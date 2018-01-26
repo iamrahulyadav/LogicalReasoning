@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -54,6 +56,8 @@ public class TopicQuestions extends AppCompatActivity {
     Questions questions = new Questions();
 
     ImageView mTopicQuestionShareImageview;
+
+    boolean isPushNotification=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +115,8 @@ public class TopicQuestions extends AppCompatActivity {
         topicName = getIntent().getExtras().getString("Topic");
         String questionUID = getIntent().getExtras().getString("questionUID");
 
+        isPushNotification = getIntent().getBooleanExtra("pushNotification", false);
+
         if (questionUID != null) {
 
             // showDialog("Loading...Please Wait");
@@ -122,6 +128,12 @@ public class TopicQuestions extends AppCompatActivity {
         TextView questionTopicName = (TextView) findViewById(R.id.fragmentAptitudeQuiz_topicName_Textview);
         questionTopicName.setText(topicName);
 
+
+        try{
+            Answers.getInstance().logCustom(new CustomEvent("Topic open").putCustomAttribute("topic",topicName));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -323,6 +335,12 @@ public class TopicQuestions extends AppCompatActivity {
 
         super.onBackPressed();
 
+        if (isPushNotification){
+            Intent intent = new Intent(TopicQuestions.this,MainActivity.class);
+            startActivity(intent);
+
+        }
+
     }
 
     public void showDialog(String message) {
@@ -382,10 +400,10 @@ public class TopicQuestions extends AppCompatActivity {
     private void openShareDialog(Uri shortUrl) {
 
         try {
-            /*
+
             Answers.getInstance().logCustom(new CustomEvent("Share link created").putCustomAttribute("Content Id", questions.getQuestionUID())
-                    .putCustomAttribute("Shares", questions.getQuestionTopicName()));
-            */
+                    .putCustomAttribute("topic name", questions.getQuestionTopicName()));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
