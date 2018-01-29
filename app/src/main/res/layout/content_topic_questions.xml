@@ -54,12 +54,12 @@
 
                 <!--Bookmark question Imageview -->
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
                     android:onClick="onBookMarkQuestion"
-                    android:src="@drawable/ic_action_share"
+                    android:src="@drawable/ic_action_bookmark"
 
                     />
 
@@ -102,18 +102,6 @@
             app:cardCornerRadius="0dp"
             app:cardElevation="0dp"></android.support.v7.widget.CardView>
 
-        <!-- Bottom Bar explaination and share -->
-        <android.support.design.widget.BottomNavigationView
-            android:id="@+id/mainactivity_navigation_menu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/colorPrimary"
-            android:visibility="gone"
-            app:elevation="@dimen/cardview_default_elevation"
-            app:itemIconTint="@color/colorWhiteBg"
-            app:itemTextColor="@color/colorWhiteBg"
-            app:menu="@menu/bottombar_mainactivity_menu" />
 
 
     </LinearLayout>

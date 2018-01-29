@@ -50,24 +50,22 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_margin="4dp"
+                    android:layout_margin="6dp"
                     android:onClick="openDeleteBookmarkDialog"
-                    android:src="@drawable/ic_menu_gallery" />
+                    android:src="@drawable/ic_action_delete" />
 
 
                 <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_margin="4dp"
+                    android:layout_margin="6dp"
                     android:onClick="onShareQuestion"
 
                     android:src="@drawable/ic_action_share" />
-
-
 
 
             </LinearLayout>

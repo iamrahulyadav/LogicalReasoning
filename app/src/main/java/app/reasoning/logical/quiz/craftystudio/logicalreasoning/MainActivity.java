@@ -73,48 +73,6 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-/*
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-
-                Questions questions = new Questions();
-                questions.setQuestionExplaination("ehhef dc");
-                questions.setQuestionTopicName("Relation");
-                questions.setQuestionName("hey how are you?");
-                questions.setOptionA("1");
-                questions.setOptionC("3");
-                questions.setOptionB("2");
-                questions.setOptionD("4");
-                questions.setCorrectAnswer("1");
-
-                //random no generate
-                final int min = 1;
-                final int max = 100;
-                Random random = new Random();
-                final int r = random.nextInt((max - min) + 1) + min;
-                questions.setRandomNumber(r);
-                fireBaseHandler.uploadQuestion(questions, new FireBaseHandler.OnQuestionlistener() {
-                    @Override
-                    public void onQuestionDownLoad(Questions questions, boolean isSuccessful) {
-
-                    }
-
-                    @Override
-                    public void onQuestionListDownLoad(ArrayList<Questions> questionList, boolean isSuccessful) {
-
-                    }
-
-                    @Override
-                    public void onQuestionUpload(boolean isSuccessful) {
-
-                        if (isSuccessful) {
-                            Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-*/
 
             }
         });
@@ -127,6 +85,26 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.mainactivity_navigation_menu);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener
+                (new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.bottombar_main_topic:
+                                downloadTopicList();
+                                break;
+                            case R.id.bottombar_main_daily:
+                                downloadDateList();
+                                break;
+
+                        }
+                        return true;
+                    }
+                });
 
     }
 
@@ -207,7 +185,7 @@ public class MainActivity extends AppCompatActivity
                         public void onItemCLickListener(View view, int position) {
                             TextView textview = (TextView) view;
 
-                            openTopicQuestionActivity(textview.getText().toString(), null);
+                            openTopicQuestionActivity(0, textview.getText().toString(), null);
                             //  Toast.makeText(TopicActivity.this, " Selected " + textview.getText().toString(), Toast.LENGTH_SHORT).show();
 
                         }
@@ -234,6 +212,70 @@ public class MainActivity extends AppCompatActivity
         });
 
 
+    }
+
+
+    public void downloadDateList() {
+        fireBaseHandler.downloadDateList(15, new FireBaseHandler.OnTestSerieslistener() {
+            @Override
+            public void onTestDownLoad(String test, boolean isSuccessful) {
+
+            }
+
+            @Override
+            public void onTestListDownLoad(ArrayList<String> testList, boolean isSuccessful) {
+                if (isSuccessful) {
+
+                    mArraylist.clear();
+
+                    for (String name : testList) {
+                        mArraylist.add(name);
+                    }
+
+                    //check = 1 is Test Series
+                    check = 1;
+                    adapter = new TopicListAdapter(getApplicationContext(), R.layout.custom_textview, mArraylist);
+
+                    adapter.setOnItemCLickListener(new ClickListener() {
+                        @Override
+                        public void onItemCLickListener(View view, int position) {
+                            TextView textview = (TextView) view;
+                            if (check == 1) {
+
+                                openTopicQuestionActivity(1, textview.getText().toString(), null);
+
+                                //  Toast.makeText(TopicActivity.this, "In Test " + " Selected " + textview.getText().toString() + " Postion is " + position, Toast.LENGTH_SHORT).show();
+
+                                try {
+                                    Answers.getInstance().logCustom(new CustomEvent("Daily Quiz open").putCustomAttribute("Date Name", textview.getText().toString()));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }
+                    });
+
+
+                    topicAndTestListview.post(new Runnable() {
+                        public void run() {
+                            topicAndTestListview.setAdapter(adapter);
+                        }
+                    });
+
+
+                    hideDialog();
+
+                }
+                hideDialog();
+            }
+
+            @Override
+            public void onTestUpload(boolean isSuccessful) {
+
+            }
+
+        });
     }
 
 
@@ -264,7 +306,7 @@ public class MainActivity extends AppCompatActivity
 
                             //download question
                             if (questionID != null) {
-                                openTopicQuestionActivity(questionTopicName, questionID);
+                                openTopicQuestionActivity(0, questionTopicName, questionID);
                                 try {
                                     Answers.getInstance().logCustom(new CustomEvent("Via dyanamic link").putCustomAttribute("question id", questionID));
                                 } catch (Exception e) {
@@ -287,7 +329,7 @@ public class MainActivity extends AppCompatActivity
 
                                 } else {
                                     //download story
-                                    openTopicQuestionActivity(questionTopicName, questionID);
+                                    openTopicQuestionActivity(0, questionTopicName, questionID);
                                     try {
                                         Answers.getInstance().logCustom(new CustomEvent("Via push notification").putCustomAttribute("Question id", questionID));
                                     } catch (Exception e) {
@@ -322,15 +364,35 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
-    public void openTopicQuestionActivity(String topicName, String QuestionUID) {
+    public void openTopicQuestionActivity(int check, String topicName, String QuestionUID) {
 
         Intent intent = new Intent(MainActivity.this, TopicQuestions.class);
         Bundle bundle = new Bundle();
+        bundle.putInt("check", check);
         bundle.putString("Topic", topicName);
         bundle.putString("questionUID", QuestionUID);
         intent.putExtras(bundle);
         startActivity(intent);
     }
+
+
+    BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.bottombar_main_topic:
+                    downloadTopicList();
+                    return true;
+
+                case R.id.bottombar_main_daily:
+                    downloadDateList();
+                    return true;
+
+
+            }
+            return false;
+        }
+    };
 
     @Override
     public void onBackPressed() {
@@ -375,12 +437,15 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(MainActivity.this, RandomTestActivity.class);
             startActivity(intent);
             // Handle the camera action
-        } else if (id == R.id.nav_rate) {
+        } else if (id == R.id.nav_bookmark) {
             Intent intent = new Intent(MainActivity.this, BookmarkActivity.class);
             startActivity(intent);
 
             // onRateUs();
+        } else if (id == R.id.nav_rate) {
+            onRateUs();
         } else if (id == R.id.nav_share) {
+
             ShareApp();
         } else if (id == R.id.nav_suggestion) {
             giveSuggestion();

@@ -130,8 +130,14 @@ public class BookmarkActivity extends AppCompatActivity {
         mQuestionsList.remove(mQuestionsList.get(mPager.getCurrentItem()));
 
         initializeViewPager();
-        questionTopicName.setText(mQuestionsList.get(mPager.getCurrentItem()).getQuestionTopicName());
 
+        if (mQuestionsList.size() != 0) {
+
+            questionTopicName.setText(mQuestionsList.get(mPager.getCurrentItem()).getQuestionTopicName());
+
+        } else {
+            questionTopicName.setText("No Bookmark");
+        }
 
     }
 

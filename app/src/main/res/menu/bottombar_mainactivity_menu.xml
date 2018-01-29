@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/bottombar_main_explaination"
-        android:icon="@drawable/ic_menu_share"
-        android:title="Explaination" />
+        android:id="@+id/bottombar_main_topic"
+        android:icon="@drawable/ic_topic"
+        android:title="Topic" />
 
     <item
-        android:id="@+id/bottombar_main_share"
-        android:icon="@drawable/ic_menu_gallery"
-        android:title="Share" />
+        android:id="@+id/bottombar_main_daily"
+        android:icon="@drawable/ic_action_calendar"
+        android:title="Daily" />
 
 
 </menu>

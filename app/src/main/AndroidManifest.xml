@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.reasoning.logical.quiz.craftystudio.logicalreasoning">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,7 +30,6 @@
         <activity
             android:name=".BookmarkActivity"
             android:label="@string/title_activity_bookmark"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
@@ -44,5 +44,5 @@
             android:value="acc1b0b9ec29985ac9dbef0f05837dac47e0b387" />
     </application>
 
-    <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>

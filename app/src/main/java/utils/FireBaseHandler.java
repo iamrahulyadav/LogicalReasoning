@@ -388,12 +388,12 @@ public class FireBaseHandler {
 
     }
 
-    public void downloadQuestionList(int limit, String testName, final OnQuestionlistener onQuestionlistener) {
+    public void downloadQuestionList(int limit, String dateName, final OnQuestionlistener onQuestionlistener) {
 
 
         mDatabaseRef = mFirebaseDatabase.getReference().child("Questions/");
 
-        Query myref2 = mDatabaseRef.orderByChild("questionTestName").equalTo(testName).limitToLast(limit);
+        Query myref2 = mDatabaseRef.orderByChild("questionTestName").equalTo(dateName).limitToLast(limit);
 
         myref2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -427,6 +427,51 @@ public class FireBaseHandler {
 
 
     }
+
+
+
+    public void downloadDateList(int limit, final OnTestSerieslistener onTestSerieslistener) {
+
+
+        mDatabaseRef = mFirebaseDatabase.getReference().child("Date/");
+
+        Query myref2 = mDatabaseRef.orderByKey().limitToLast(limit);
+
+       // databaseReferenceArrayList.add(myref2);
+
+        ValueEventListener valueEventListener = myref2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<String> dateArrayList = new ArrayList<String>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    String test = snapshot.getValue(String.class);
+                    if (test != null) {
+                        dateArrayList.add(test);
+
+                    }
+                }
+
+                Collections.reverse(dateArrayList);
+
+                onTestSerieslistener.onTestListDownLoad(dateArrayList, true);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                onTestSerieslistener.onTestListDownLoad(null, false);
+
+            }
+        });
+
+       // valueEventListenerArrayList.add(valueEventListener);
+
+
+    }
+
 
 
     public interface OnQuestionlistener {

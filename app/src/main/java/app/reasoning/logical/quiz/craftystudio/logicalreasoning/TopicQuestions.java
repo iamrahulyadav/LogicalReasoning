@@ -57,7 +57,9 @@ public class TopicQuestions extends AppCompatActivity {
 
     ImageView mTopicQuestionShareImageview;
 
-    boolean isPushNotification=false;
+    boolean isPushNotification = false;
+
+    int check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,27 +78,6 @@ public class TopicQuestions extends AppCompatActivity {
         });
 
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.mainactivity_navigation_menu);
-
-        bottomNavigationView.setOnNavigationItemSelectedListener
-                (new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.bottombar_main_explaination:
-                                putExplaination();
-                                break;
-                            case R.id.bottombar_main_share:
-                                questions = mQuestionsList.get(mPager.getCurrentItem());
-                                onShareClick();
-                                break;
-
-                        }
-                        return true;
-                    }
-                });
-
         mExplainationBottomsheetTextview = (TextView) findViewById(R.id.randomTestactivity_explaination_textview);
 
         //share question
@@ -111,27 +92,38 @@ public class TopicQuestions extends AppCompatActivity {
         mPager = (ViewPager) findViewById(R.id.mainActivity_viewpager);
         initializeViewPager();
 
+        //to differentiate between topic and date questions
+        check = getIntent().getExtras().getInt("check");
+
         //questions by topic name
         topicName = getIntent().getExtras().getString("Topic");
         String questionUID = getIntent().getExtras().getString("questionUID");
 
         isPushNotification = getIntent().getBooleanExtra("pushNotification", false);
 
-        if (questionUID != null) {
-
-            // showDialog("Loading...Please Wait");
-            downloadQuestion(questionUID);
-        }
-        showDialog("Loading...Please Wait");
-        downloadQuestionByTopic(topicName);
 
         TextView questionTopicName = (TextView) findViewById(R.id.fragmentAptitudeQuiz_topicName_Textview);
         questionTopicName.setText(topicName);
 
+        if (check == 0) {
 
-        try{
-            Answers.getInstance().logCustom(new CustomEvent("Topic open").putCustomAttribute("topic",topicName));
-        }catch (Exception e){
+            if (questionUID != null) {
+
+                // showDialog("Loading...Please Wait");
+                downloadQuestion(questionUID);
+            }
+            showDialog("Loading...Please Wait");
+            downloadQuestionByTopic(topicName);
+
+        } else if (check == 1) {
+            showDialog("Loading...Please Wait");
+            downloadQuestionByDateName(topicName);
+        }
+
+
+        try {
+            Answers.getInstance().logCustom(new CustomEvent("Topic open").putCustomAttribute("topic", topicName));
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -143,6 +135,50 @@ public class TopicQuestions extends AppCompatActivity {
         Questions question = mQuestionsList.get(mPager.getCurrentItem());
         //mExplainationBottomsheetTextview.setText(question.getQuestionExplaination());
     }
+
+    /* Download questions according to TEST name*/
+    public void downloadQuestionByDateName(String dateName) {
+        fireBaseHandler = new FireBaseHandler();
+
+        isMoreQuestionAvailable = false;
+        fireBaseHandler.downloadQuestionList(30, dateName, new FireBaseHandler.OnQuestionlistener() {
+            @Override
+            public void onQuestionDownLoad(Questions questions, boolean isSuccessful) {
+
+                hideDialog();
+            }
+
+            @Override
+            public void onQuestionListDownLoad(ArrayList<Questions> questionList, boolean isSuccessful) {
+
+                if (isSuccessful) {
+
+                    mQuestionsList.clear();
+
+                    for (Questions questions : questionList) {
+                        mQuestionsList.add(questions);
+                    }
+                    initializeViewPager();
+
+                    mPagerAdapter.notifyDataSetChanged();
+
+
+                }
+
+                hideDialog();
+
+            }
+
+            @Override
+            public void onQuestionUpload(boolean isSuccessful) {
+
+
+            }
+        });
+
+
+    }
+
 
     public void downloadQuestion(String questionUID) {
 
@@ -335,8 +371,8 @@ public class TopicQuestions extends AppCompatActivity {
 
         super.onBackPressed();
 
-        if (isPushNotification){
-            Intent intent = new Intent(TopicQuestions.this,MainActivity.class);
+        if (isPushNotification) {
+            Intent intent = new Intent(TopicQuestions.this, MainActivity.class);
             startActivity(intent);
 
         }
