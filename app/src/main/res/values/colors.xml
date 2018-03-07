@@ -9,16 +9,25 @@
     <color name="colorYellow">#e0d32b</color>
 
 
+
+    <color name="colorMainBg">#1d295b</color>
+
+
     <color name="colorWhiteBg">#ffffff</color>
+
+    <color name="colorWhiteGreyish">#d4c3c4c4</color>
+
     <color name="colorLightWhiteBg">#e4e0e0</color>
 
     <color name="colorLightBlueBg">#2b92f2</color>
 
+    <color name="colorMainText">#a3adc7</color>
+
     <color name="colorTransparent">#00f2eeee</color>
 
-    <color name="colorBlack">#464646</color>
+    <color name="colorBlackish">#5f6263</color>
+    <color name="colorBlack">#292727</color>
 
-    <color name="colorMainBg">#1d295b</color>
-    <color name="colorMainText">#9fa9c4</color>
+    <color name="colorWhitish">#edf1f4</color>
 
 </resources>

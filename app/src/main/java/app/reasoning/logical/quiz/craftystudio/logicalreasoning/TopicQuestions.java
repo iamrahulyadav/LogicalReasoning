@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
@@ -14,11 +15,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,9 +41,11 @@ import com.google.firebase.dynamiclinks.ShortDynamicLink;
 
 import java.util.ArrayList;
 
+import utils.ClickListener;
 import utils.DataBaseHandler;
 import utils.FireBaseHandler;
 import utils.Questions;
+import utils.RightNavAdapter;
 import utils.ZoomOutPageTransformer;
 
 public class TopicQuestions extends AppCompatActivity {
@@ -61,10 +71,26 @@ public class TopicQuestions extends AppCompatActivity {
 
     int check;
 
+
+    TextView mQuestionNumberTextview;
+    TextView mQuestionTimerTextview;
+    long totalSeconds = 3600;
+    long intervalSeconds = 1;
+    static CountDownTimer timer;
+
+    DrawerLayout drawer;
+
+
+    ListView questionNameDisplayListview;
+    RightNavAdapter questionNameAdapter;
+    ArrayList<Object> mQuestionsNameList = new ArrayList<>();
+    private boolean isLoading = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_topic_questions);
+        setContentView(R.layout.app_right_nav_topic_question);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -76,6 +102,15 @@ public class TopicQuestions extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_right_nav_main_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        toggle.setDrawerSlideAnimationEnabled(true);
 
 
         mExplainationBottomsheetTextview = (TextView) findViewById(R.id.randomTestactivity_explaination_textview);
@@ -120,12 +155,123 @@ public class TopicQuestions extends AppCompatActivity {
             downloadQuestionByDateName(topicName);
         }
 
+        //display question number
+        mQuestionNumberTextview = (TextView) findViewById(R.id.fragmentAptitudeQuiz_questionNumber_Textview);
+
+        //display timer for each question
+        mQuestionTimerTextview = (TextView) findViewById(R.id.fragmentAptitudeQuiz_question_timer_Textview);
+        timer = new CountDownTimer(totalSeconds * 1000, intervalSeconds * 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                //  Log.d("seconds elapsed: ", (totalSeconds * 1000 - millisUntilFinished) / 1000 + "");
+
+                int seconds = 0, minutes = 0;
+                questions = mQuestionsList.get(mPager.getCurrentItem());
+
+
+                if (questions.getUserAnswer() == null) {
+                    questions.setQuestionTimer(questions.getQuestionTimer() + 1);
+
+                } else {
+
+
+                    //timeElapsed = seconds;
+                }
+                seconds = questions.getQuestionTimer();
+
+                minutes = seconds / 60;
+                seconds = seconds % 60;
+
+                mQuestionTimerTextview.setText(String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
+
+
+            }
+
+            public void onFinish() {
+                Log.d("done!", "Time's up!");
+            }
+
+        };
+
+
+        questionNameDisplayListview = (ListView) findViewById(R.id.question_name_display_main_listview);
+        questionNameDisplayListview.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                if (!questionNameDisplayListview.canScrollVertically(1)) {
+
+                    if (!isLoading) {
+
+                        if (isMoreQuestionAvailable) {
+                            downloadMoreQuestionList();
+                        }
+                        //Toast.makeText(MainActivity.this, "Loading", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
+            }
+        });
+
+
+        questionNameDisplayListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                mPager.setCurrentItem(i);
+                drawer.closeDrawers();
+                // Toast.makeText(MainActivity.this, mQuestionsNameList.get(i), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         try {
             Answers.getInstance().logCustom(new CustomEvent("Topic open").putCustomAttribute("topic", topicName));
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    public void onOpenRightNav(View view) {
+        drawer.openDrawer(Gravity.RIGHT);
+    }
+
+
+    private void onAddingQuestionName(ArrayList<Questions> arrayList) {
+        // DIsplay Question Name Right Navigation
+
+
+        // Toast.makeText(this, arrayList.size() + "", Toast.LENGTH_SHORT).show();
+
+        for (int i = 0; i < arrayList.size(); i++) {
+
+            mQuestionsNameList.add(arrayList.get(i).getQuestionName());
+
+        }
+
+        questionNameAdapter = new RightNavAdapter(TopicQuestions.this, R.layout.custom_right_side_nav, mQuestionsNameList);
+
+        questionNameAdapter.setOnItemCLickListener(new ClickListener() {
+            @Override
+            public void onItemCLickListener(View view, int position) {
+                mPager.setCurrentItem(position);
+                drawer.closeDrawers();
+                // Toast.makeText(MainActivity.this, mQuestionsNameList.get(i), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+       /* questionNameAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                mQuestionsNameList);
+                */
+        questionNameDisplayListview.setAdapter(questionNameAdapter);
+
+
+        //  Toast.makeText(this, mQuestionsNameList.size() + "", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -163,6 +309,8 @@ public class TopicQuestions extends AppCompatActivity {
                     mPagerAdapter.notifyDataSetChanged();
 
 
+                    onAddingQuestionName(mQuestionsList);
+                    timer.start();
                 }
 
                 hideDialog();
@@ -193,6 +341,8 @@ public class TopicQuestions extends AppCompatActivity {
 
                     hideDialog();
 
+                    timer.start();
+
                 }
 
 
@@ -215,6 +365,8 @@ public class TopicQuestions extends AppCompatActivity {
     public void downloadMoreQuestionList() {
 
 
+        isLoading = true;
+
         fireBaseHandler.downloadMoreQuestionsList(topicName, 5, mQuestionsList.get(mQuestionsList.size() - 1).getQuestionUID(), new FireBaseHandler.OnQuestionlistener() {
             @Override
             public void onQuestionDownLoad(Questions questions, boolean isSuccessful) {
@@ -229,6 +381,8 @@ public class TopicQuestions extends AppCompatActivity {
 
                         if (topicName.equalsIgnoreCase(question.getQuestionTopicName())) {
                             TopicQuestions.this.mQuestionsList.add(question);
+                            mQuestionsNameList.add(question.getQuestionName());
+
 
                         } else {
                             isMoreQuestionAvailable = false;
@@ -238,6 +392,8 @@ public class TopicQuestions extends AppCompatActivity {
                     //initializeNativeAds();
                     mPagerAdapter.notifyDataSetChanged();
 
+                    questionNameAdapter.notifyDataSetChanged();
+
                     hideDialog();
 
 
@@ -245,6 +401,8 @@ public class TopicQuestions extends AppCompatActivity {
                     hideDialog();
                     // openConnectionFailureDialog();
                 }
+
+                isLoading = false;
             }
 
             @Override
@@ -277,6 +435,9 @@ public class TopicQuestions extends AppCompatActivity {
                     initializeViewPager();
 
                     mPagerAdapter.notifyDataSetChanged();
+
+                    onAddingQuestionName(mQuestionsList);
+                    timer.start();
                 }
                 hideDialog();
 
@@ -311,6 +472,8 @@ public class TopicQuestions extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
 
+                mQuestionNumberTextview.setText("Question " + (position + 1));
+
                 //checkInterstitialAds();
             }
 
@@ -321,6 +484,7 @@ public class TopicQuestions extends AppCompatActivity {
         });
 
     }
+
 
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {

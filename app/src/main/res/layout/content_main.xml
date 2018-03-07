@@ -5,7 +5,7 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorLightWhiteBg"
+    android:background="@color/colorWhiteBg"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="app.reasoning.logical.quiz.craftystudio.logicalreasoning.MainActivity"
@@ -47,9 +47,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:layout_marginTop="2dp"
             android:layout_weight="1"
-            android:background="@color/colorLightWhiteBg"
+            android:background="@color/colorWhiteBg"
             android:divider="@color/colorTransparent"
             android:dividerHeight="0dp"></ListView>
 
@@ -59,10 +61,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
             android:background="@color/colorPrimary"
             android:visibility="visible"
             app:elevation="@dimen/cardview_default_elevation"
-            android:layout_gravity="bottom"
             app:itemIconTint="@color/colorWhiteBg"
             app:itemTextColor="@color/colorWhiteBg"
             app:menu="@menu/bottombar_mainactivity_menu" />

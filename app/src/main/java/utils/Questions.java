@@ -21,6 +21,17 @@ public class Questions implements Serializable{
     private String questionTestName;
     private String previousYearsName;
 
+    public int getQuestionTimer() {
+        return questionTimer;
+    }
+
+    public void setQuestionTimer(int questionTimer) {
+        this.questionTimer = questionTimer;
+    }
+
+    private int questionTimer;
+
+
 
     public int getRandomNumber() {
         return randomNumber;
