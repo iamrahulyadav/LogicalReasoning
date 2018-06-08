@@ -193,9 +193,9 @@ public class MainActivity extends AppCompatActivity
                     adapter.setOnItemCLickListener(new ClickListener() {
                         @Override
                         public void onItemCLickListener(View view, int position) {
-                            TextView textview = (TextView) view;
+                            String topicString = mArraylist.get(position);
 
-                            openTopicQuestionActivity(0, textview.getText().toString(), null);
+                            openTopicQuestionActivity(0, topicString, null);
                             //  Toast.makeText(TopicActivity.this, " Selected " + textview.getText().toString(), Toast.LENGTH_SHORT).show();
 
                         }
@@ -249,15 +249,17 @@ public class MainActivity extends AppCompatActivity
                     adapter.setOnItemCLickListener(new ClickListener() {
                         @Override
                         public void onItemCLickListener(View view, int position) {
-                            TextView textview = (TextView) view;
+
+                            String string = mArraylist.get(position);
+
                             if (check == 1) {
 
-                                openTopicQuestionActivity(1, textview.getText().toString(), null);
+                                openTopicQuestionActivity(1, string, null);
 
                                 //  Toast.makeText(TopicActivity.this, "In Test " + " Selected " + textview.getText().toString() + " Postion is " + position, Toast.LENGTH_SHORT).show();
 
                                 try {
-                                    Answers.getInstance().logCustom(new CustomEvent("Daily Quiz open").putCustomAttribute("Date Name", textview.getText().toString()));
+                                    Answers.getInstance().logCustom(new CustomEvent("Daily Quiz open").putCustomAttribute("Date Name", string));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
