@@ -26,6 +26,7 @@
         android:layout_weight="1"
         android:paddingBottom="6dp"
         android:paddingTop="6dp"
+        android:id="@+id/custom_background_linearLayout"
         android:orientation="horizontal">
 
         <TextView

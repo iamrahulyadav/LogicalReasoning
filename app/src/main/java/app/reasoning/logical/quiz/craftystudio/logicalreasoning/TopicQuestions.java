@@ -26,12 +26,20 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdError;
+import com.facebook.ads.AdListener;
+import com.facebook.ads.AdSize;
+import com.facebook.ads.AdView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -232,6 +240,77 @@ public class TopicQuestions extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+
+
+
+        initializeBannerAds();
+
+    }
+
+    private void initializeBannerAds() {
+
+
+        AdView adView = new AdView(this, "204879970145805_204880070145795", AdSize.BANNER_HEIGHT_50);
+
+        // Find the Ad Container
+        LinearLayout adContainer = (LinearLayout) findViewById(R.id.mainActivity_bannerAd_linearLayout);
+
+        // Add the ad view to your activity layout
+        adContainer.addView(adView);
+
+        // Request an ad
+        adView.loadAd();
+
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onError(Ad ad, AdError adError) {
+                initializeBannerAds(true);
+            }
+
+            @Override
+            public void onAdLoaded(Ad ad) {
+
+            }
+
+            @Override
+            public void onAdClicked(Ad ad) {
+
+            }
+
+            @Override
+            public void onLoggingImpression(Ad ad) {
+
+            }
+        });
+
+    }
+
+    private void initializeBannerAds(boolean admob) {
+
+
+        com.google.android.gms.ads.AdView adView = new com.google.android.gms.ads.AdView(this);
+        adView.setAdSize(com.google.android.gms.ads.AdSize.SMART_BANNER);
+        adView.setAdUnitId("ca-app-pub-8455191357100024/7091663406");
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+        final LinearLayout adContainer = (LinearLayout) findViewById(R.id.mainActivity_bannerAd_linearLayout);
+
+        adContainer.addView(adView);
+
+        adView.setAdListener(new com.google.android.gms.ads.AdListener(){
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+
+                adContainer.setVisibility(View.GONE);
+
+            }
+        });
+
 
     }
 
@@ -551,7 +630,11 @@ public class TopicQuestions extends AppCompatActivity {
     }
 
     public void hideDialog() {
-        progressDialog.cancel();
+        try {
+            progressDialog.cancel();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void onShareClick() {

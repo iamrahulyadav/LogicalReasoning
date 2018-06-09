@@ -32,6 +32,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdError;
+import com.facebook.ads.InterstitialAd;
+import com.facebook.ads.InterstitialAdListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -80,6 +84,10 @@ public class RandomTestActivity extends AppCompatActivity {
     CountDownTimer timer;
 
     DrawerLayout drawer;
+
+
+    private InterstitialAd interstitialAd;
+
 
 
     @Override
@@ -145,7 +153,12 @@ public class RandomTestActivity extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 //  Log.d("seconds elapsed: ", (totalSeconds * 1000 - millisUntilFinished) / 1000 + "");
 
+                if (mQuestionsList.size()<=0){
+                    return;
+                }
+
                 int seconds = 0, minutes = 0;
+
                 questions = mQuestionsList.get(mPager.getCurrentItem());
 
 
@@ -189,6 +202,64 @@ public class RandomTestActivity extends AppCompatActivity {
         initializeViewPager();
 
 
+        initializeInterstitial();
+
+    }
+
+    private void initializeInterstitial() {
+
+        interstitialAd = new InterstitialAd(this, "204879970145805_205254126775056");
+
+
+
+        // Set listeners for the Interstitial Ad
+        interstitialAd.setAdListener(new InterstitialAdListener() {
+            @Override
+            public void onInterstitialDisplayed(Ad ad) {
+                // Interstitial displayed callback
+            }
+
+            @Override
+            public void onInterstitialDismissed(Ad ad) {
+                // Interstitial dismissed callback
+            }
+
+            @Override
+            public void onError(Ad ad, AdError adError) {
+                // Ad error callback
+
+                Log.d("Ads", "onError: "+adError);
+
+            }
+
+            @Override
+            public void onAdLoaded(Ad ad) {
+                // Show the ad when it's done loading.
+            }
+
+            @Override
+            public void onAdClicked(Ad ad) {
+                // Ad clicked callback
+            }
+
+            @Override
+            public void onLoggingImpression(Ad ad) {
+                // Ad impression logged callback
+            }
+        });
+
+
+        interstitialAd.loadAd();
+
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        if (interstitialAd != null) {
+            interstitialAd.destroy();
+        }
+        super.onDestroy();
     }
 
     private void onAddingQuestionName(ArrayList<Questions> arrayList) {
@@ -257,34 +328,49 @@ public class RandomTestActivity extends AppCompatActivity {
 
     private void calculateResult() {
 
+        try {
 
-        mCountDownTimer.setText("00:00");
-        int rightAnswer = 0, wrongAnswer = 0;
-        for (Questions question : mQuestionsList) {
-            if (question.getCorrectAnswer().equalsIgnoreCase(question.getUserAnswer())) {
-                rightAnswer++;
+            if (interstitialAd != null) {
+
+                if (interstitialAd.isAdLoaded()) {
+                    interstitialAd.show();
+                }
             }
+
+            interstitialAd.show();
+
+            mCountDownTimer.setText("00:00");
+            int rightAnswer = 0, wrongAnswer = 0;
+            for (Questions question : mQuestionsList) {
+                if (question.getCorrectAnswer().equalsIgnoreCase(question.getUserAnswer())) {
+                    rightAnswer++;
+                }
+            }
+
+
+            wrongAnswer = 10 - rightAnswer;
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(RandomTestActivity.this);
+
+            builder.setMessage("Right Answers = " + rightAnswer + " \n\n Wrong Answers = " + wrongAnswer)
+                    .setTitle("Results");
+
+            builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+                    dialog.dismiss();
+                }
+            });
+            final AlertDialog mydialog = builder.create();
+            //   mydialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextSize(16);
+            mydialog.show();
+            // displayRightAnswers.setText("Right = " + rightAnswer + " Wrong = " + wrongAnswer);
+            // Toast.makeText(this, "right answers " + rightAnswer + " wrong answers " + wrongAnswer, Toast.LENGTH_SHORT).show();
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-
-        wrongAnswer = 10 - rightAnswer;
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(RandomTestActivity.this);
-
-        builder.setMessage("Right Answers = " + rightAnswer + " \n\n Wrong Answers = " + wrongAnswer)
-                .setTitle("Results");
-
-        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-                dialog.dismiss();
-            }
-        });
-        final AlertDialog mydialog = builder.create();
-        //   mydialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextSize(16);
-        mydialog.show();
-        // displayRightAnswers.setText("Right = " + rightAnswer + " Wrong = " + wrongAnswer);
-        // Toast.makeText(this, "right answers " + rightAnswer + " wrong answers " + wrongAnswer, Toast.LENGTH_SHORT).show();
     }
 
     private void initializeViewPager() {
@@ -455,7 +541,12 @@ public class RandomTestActivity extends AppCompatActivity {
     }
 
     public void hideDialog() {
-        progressDialog.cancel();
+        try {
+            progressDialog.cancel();
+        }catch ( Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
 
